@@ -17,8 +17,11 @@ RUN apt-get upgrade \
 	php-mbstring \
 	vim
 
-ADD sources/default etc/nginx/sites-available/default
-	&& 
+ADD sources/default etc/nginx/sites-available \
+	&& sources/nginx-selfsigned.crt etc/ssl/certs \
+	&& sources/nginx-selfsigned.key etc/ssl/private \
+	&& sources/self-signed.conf etc/nginx/snippets \
+	&& sources/ssl-params.conf etc/nginx/snippets
 
 
 EXPOSE 80 443
