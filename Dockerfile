@@ -17,11 +17,11 @@ RUN apt-get upgrade \
 	php-mbstring \
 	vim
 
-ADD sources/default etc/nginx/sites-available \
-	&& sources/nginx-selfsigned.crt etc/ssl/certs \
-	&& sources/nginx-selfsigned.key etc/ssl/private \
-	&& sources/self-signed.conf etc/nginx/snippets \
-	&& sources/ssl-params.conf etc/nginx/snippets
+COPY srcs/dhparam.pem /etc/nginx
+COPY srcs/nginx-selfsigned.crt /etc/ssl/certs
+COPY srcs/nginx-selfsigned.key /etc/ssl/private
+COPY srcs/self-signed.conf /etc/nginx/snippets
+COPY srcs/ssl-params.conf /etc/nginx/snippets
+COPY srcs/default /etc/nginx/sites-available
 
-
-EXPOSE 80 443
+EXPOSE 443 80
