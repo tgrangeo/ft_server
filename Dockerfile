@@ -21,19 +21,32 @@ RUN apt-get upgrade \
 	php7.3-zip \
 	php7.3-soap \
 	php7.3-imap \
-	vim
+	vim 
 
+#https
 COPY srcs/dhparam.pem /etc/nginx
 COPY srcs/nginx-selfsigned.crt /etc/ssl/certs
 COPY srcs/nginx-selfsigned.key /etc/ssl/private
 COPY srcs/self-signed.conf /etc/nginx/snippets
 COPY srcs/ssl-params.conf /etc/nginx/snippets
 COPY srcs/default /etc/nginx/sites-available
-COPY srcs/phpinfo.php /usr/share/nginx/html
-COPY srcs/setup.sh /etc
 
-EXPOSE 443 80
+#php
+COPY srcs/phpinfo.php /var/www/html
 
-WORKDIR /etc
+#phpmyadmin
+RUN mkdir /var/www/html/phpmyadmin
+COPY srcs/phpmyadmin /var/www/html/phpmyadmin
 
-ENTRYPOINT ["bash", "setup.sh"]
+ #cree et copie le dossier worpress 
+RUN mkdir /var/www/html/wordpress
+COPY srcs/wordpress /var/www/html/wordpress
+
+#user mysql
+COPY srcs/user.sql .
+
+COPY srcs/setup.sh .
+
+EXPOSE 443 80 3306
+
+CMD ["/bin/sh", "setup.sh"]
