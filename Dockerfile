@@ -29,7 +29,11 @@ COPY srcs/nginx-selfsigned.crt /etc/ssl/certs
 COPY srcs/nginx-selfsigned.key /etc/ssl/private
 COPY srcs/self-signed.conf /etc/nginx/snippets
 COPY srcs/ssl-params.conf /etc/nginx/snippets
-COPY srcs/default /etc/nginx/sites-available
+
+#auto index
+COPY srcs/default-on .
+COPY srcs/default-off .
+#ADD  srcs/.zshrc ./root/.zshrc
 
 #php
 COPY srcs/phpinfo.php /var/www/html
@@ -38,15 +42,20 @@ COPY srcs/phpinfo.php /var/www/html
 RUN mkdir /var/www/html/phpmyadmin
 COPY srcs/phpmyadmin /var/www/html/phpmyadmin
 
- #cree et copie le dossier worpress 
-RUN mkdir /var/www/html/wordpress
-COPY srcs/wordpress /var/www/html/wordpress
+#cree et copie le dossier worpress 
+RUN wget -c https://wordpress.org/latest.tar.gz
+RUN tar -xvzf latest.tar.gz
+RUN rm -rf latest.tar.gz
+RUN mv wordpress/ /var/www/html/
+RUN chown -R www-data:www-data /var/www/html/wordpress/
+RUN chmod 755 -R /var/www/html/wordpress/
 
 #user mysql
 COPY srcs/user.sql .
 
+#script de start
 COPY srcs/setup.sh .
 
-EXPOSE 443 80 3306
+EXPOSE 443 80 
 
-CMD ["/bin/sh", "setup.sh"]
+RUN sh setup.sh
